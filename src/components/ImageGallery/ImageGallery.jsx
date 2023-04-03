@@ -19,7 +19,7 @@ export default class ImageGallery extends Component {
   render() {
     const { images } = this.state;
     return (
-      images.length > 0 && (
+      images && (
         <ImageGalleryList>
           {images.map(image => (
             <ImageGalleryItem
