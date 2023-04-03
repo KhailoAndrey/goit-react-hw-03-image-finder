@@ -5,7 +5,7 @@ import { ImageGalleryList } from './ImageGallery.styled';
 
 export default class ImageGallery extends Component {
   state = {
-    images: null,
+    images: [],
   };
 
   componentDidUpdate(prevProps, prevState) {
@@ -19,7 +19,7 @@ export default class ImageGallery extends Component {
   render() {
     const { images } = this.state;
     return (
-      images && (
+      images.length > 0 && (
         <ImageGalleryList>
           {images.map(image => (
             <ImageGalleryItem
