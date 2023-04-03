@@ -1,11 +1,12 @@
 import { Component } from 'react';
+import { GalleryItem, GalleryItemImage } from './ImageGalleryItem.styled';
 
 export default class ImageGalleryItem extends Component {
   render() {
     return (
-      <li key={this.props.id} className="gallery-item">
-        <img src={this.props.webformatURL} alt="" />
-      </li>
+      <GalleryItem>
+        <GalleryItemImage src={this.props.webformatURL} alt="image" />
+      </GalleryItem>
     );
   }
 }
