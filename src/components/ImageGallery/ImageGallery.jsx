@@ -5,47 +5,52 @@ import { getImages } from 'services/fetch';
 import { ImageGalleryList } from './ImageGallery.styled';
 import { Loader } from 'components/Loader/Loader';
 
+const STATUS = {
+  IDLE: 'idle',
+  PENDING: 'pending',
+  RESOLVED: 'resolved',
+  REJECTED: 'rejected',
+};
 export default class ImageGallery extends Component {
   state = {
     images: [],
-    error: '',
-    isLoading: false,
+    status: STATUS.IDLE,
   };
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(prevProps) {
     const searchText = this.props.searchText.trim();
     if (prevProps.searchText !== searchText && searchText) {
-      this.setState({ isLoading: true });
+      this.setState({ status: STATUS.PENDING });
       getImages(searchText)
-        .then(({ hits }) => {
-          this.setState({ images: hits });
+        .then(data => {
+          if (data.status === 'error') {
+            return Promise.reject(data.message);
+          }
+          this.setState({
+            images: data.hits,
+            status: STATUS.RESOLVED,
+          });
         })
-        .catch(error) {
-          console.log(error);
-          this.setState({ error });
-        }
-        .finally(() => {
-          this.setState({ isLoading: false });
+        .catch(error => {
+          this.setState({ error, status: STATUS.REJECTED });
         });
     }
   }
   render() {
-    const { images, error, isLoading } = this.state;
-    return (
-      <>
-        {isLoading && <Loader />}
-        {error && Notiflix.Notify.failure(error.message)}
-        {images && (
-          <ImageGalleryList>
-            {images.map(image => (
-              <ImageGalleryItem
-                key={image.id}
-                webformatURL={image.webformatURL}
-              />
-            ))}
-          </ImageGalleryList>
-        )}
-      </>
-    );
+    const { images, status } = this.state;
+    if (status === STATUS.PENDING) return <Loader />;
+    else if (status === STATUS.RESOLVED)
+      return (
+        <ImageGalleryList>
+          {images.map(image => (
+            <ImageGalleryItem
+              key={image.id}
+              webformatURL={image.webformatURL}
+            />
+          ))}
+        </ImageGalleryList>
+      );
+    else if (status === STATUS.REJECTED)
+      return Notiflix.Notify.failure('Что-то пошло не так ...');
   }
 }

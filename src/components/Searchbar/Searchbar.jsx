@@ -1,6 +1,11 @@
 import { Component } from 'react';
-import { SearchHeader, SearchForm, SearchFormButton, SearchFormInput } from './Searchbar.styled';
-
+import {
+  SearchHeader,
+  SearchForm,
+  SearchFormButton,
+  SearchFormInput,
+} from './Searchbar.styled';
+import { FcSearch } from 'react-icons/fc';
 export default class Searchbar extends Component {
   state = {
     value: '',
@@ -16,7 +21,9 @@ export default class Searchbar extends Component {
     return (
       <SearchHeader>
         <SearchForm onSubmit={this.handleSubmit}>
-          <SearchFormButton type="submit"></SearchFormButton>
+          <SearchFormButton type="submit">
+            <FcSearch />
+          </SearchFormButton>
 
           <SearchFormInput
             type="text"
