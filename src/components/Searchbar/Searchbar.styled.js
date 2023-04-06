@@ -36,8 +36,8 @@ export const SearchFormButton = styled.button`
   width: 48px;
   height: 48px;
   border: 0;
-  background-image: url('https://pixabay.com/get/g6549278642fd5ab57e7cf9ad7d4877a22d9d6ffddd9de2e42d5f4e273fff9d159168477a445205aa0f80fc19469881e4_640.png');
-  background-size: 40%;
+  background-image: url('https://image.flaticon.com/icons/svg/149/149852.svg');
+  background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
   opacity: 0.6;
