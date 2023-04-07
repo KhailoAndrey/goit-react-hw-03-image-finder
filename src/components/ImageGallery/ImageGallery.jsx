@@ -77,37 +77,37 @@ export default class ImageGallery extends Component {
   };
 
   render() {
-    const { isShowModal, largeImgURL, images, status } = this.state;
-    if (status === STATUS.PENDING) return <Loader />;
-    else if (status === STATUS.RESOLVED)
-      return (
-        <>
-          {isShowModal && (
-            <Modal largeImageURL={largeImgURL} closeModal={this.closeModal} />
-          )}
-          {
-            <>
-              <ImageGalleryList onClick={e => this.imageClick(e)}>
-                {images.map(image => {
-                  return (
-                    <ImageGalleryItem
-                      webformatURL={image.webformatURL}
-                      key={image.id}
-                      id={image.id}
-                    />
-                  );
-                })}
-              </ImageGalleryList>
-
-              {status === STATUS.RESOLVED && (
-                <LoadMoreBtn onClick={this.loadMoreBtn} />
-              )}
-            </>
-          }
-        </>
-      );
-    else if (status === STATUS.REJECTED)
-      return Notiflix.Notify.failure('Что-то пошло не так ...');
+    const { isShowModal, largeImgURL, images, status, currentPage } =
+      this.state;
+    return (
+      <>
+        {status === STATUS.PENDING && currentPage === 1 && <Loader />}
+        {isShowModal && (
+          <Modal largeImageURL={largeImgURL} closeModal={this.closeModal} />
+        )}
+        {images.length > 0 && (
+          <>
+            <ImageGalleryList onClick={e => this.imageClick(e)}>
+              {images.map(image => {
+                return (
+                  <ImageGalleryItem
+                    webformatURL={image.webformatURL}
+                    key={image.id}
+                    id={image.id}
+                  />
+                );
+              })}
+            </ImageGalleryList>
+            {status === STATUS.RESOLVED && (
+              <LoadMoreBtn onClick={this.loadMoreBtn} />
+            )}
+            {status === STATUS.PENDING && <Loader />}
+          </>
+        )}
+        {status === STATUS.REJECTED &&
+          Notiflix.Notify.failure('Что-то пошло не так ...')}
+      </>
+    );
   }
 }
 

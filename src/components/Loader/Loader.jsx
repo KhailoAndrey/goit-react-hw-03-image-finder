@@ -1,16 +1,18 @@
-import { MagnifyingGlass } from 'react-loader-spinner';
+import { ProgressBar } from 'react-loader-spinner';
+import { Container } from './Loader.styled';
 export const Loader = () => {
   return (
-    <MagnifyingGlass
-      visible={true}
-      height="80"
-      width="80"
-      ariaLabel="MagnifyingGlass-loading"
-      wrapperStyle={{}}
-      wrapperClass="MagnifyingGlass-wrapper"
-      glassColor="#c7c537"
-      color="#2628ad"
-    />
+    <Container>
+      <ProgressBar
+        height="80"
+        width="80"
+        ariaLabel="progress-bar-loading"
+        wrapperStyle={{}}
+        wrapperClass="progress-bar-wrapper"
+        borderColor="#ceaf00"
+        barColor="#00aeff"
+      />
+    </Container>
   );
 };
 export default Loader;
