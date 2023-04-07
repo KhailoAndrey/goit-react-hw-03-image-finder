@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { GalleryItem, GalleryItemImage } from './ImageGalleryItem.styled';
 
@@ -14,3 +15,8 @@ export default class ImageGalleryItem extends Component {
     );
   }
 }
+
+ImageGalleryItem.propTypes = {
+  id: PropTypes.number.isRequired,
+  webformatURL: PropTypes.string.isRequired,
+};

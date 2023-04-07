@@ -7,8 +7,6 @@ export class App extends Component {
   state = {
     searchText: '',
   };
-
-  
   createSearchText = searchText => {
     this.setState({ searchText });
   };

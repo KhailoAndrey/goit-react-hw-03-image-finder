@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { DivModal, Overlay } from './Modal.styled';
 
@@ -28,3 +29,8 @@ export class Modal extends Component {
     );
   }
 }
+
+Modal.propTypes = {
+  largeImageURL: PropTypes.string.isRequired,
+  closeModal: PropTypes.func.isRequired,
+};
