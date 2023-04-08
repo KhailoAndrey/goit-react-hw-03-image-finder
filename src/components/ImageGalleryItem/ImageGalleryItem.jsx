@@ -9,7 +9,7 @@ export default class ImageGalleryItem extends Component {
         <GalleryItemImage
           src={this.props.webformatURL}
           id={this.props.id}
-          alt="image"
+          alt={this.props.tags}
         />
       </GalleryItem>
     );
@@ -19,4 +19,5 @@ export default class ImageGalleryItem extends Component {
 ImageGalleryItem.propTypes = {
   id: PropTypes.number.isRequired,
   webformatURL: PropTypes.string.isRequired,
+  tags: PropTypes.string.isRequired,
 };

@@ -21,6 +21,7 @@ export default class ImageGallery extends Component {
     isShowModal: false,
     largeImgURL: '',
     currentPage: 1,
+    isLoadMore: true,
   };
 
   closeModal = () => {
@@ -30,14 +31,37 @@ export default class ImageGallery extends Component {
     const searchText = this.props.searchText.trim();
     const { currentPage } = this.state;
     if (prevProps.searchText !== searchText && searchText) {
-      this.setState({ status: STATUS.PENDING, currentPage: 1, images: [] });
+      this.setState({
+        status: STATUS.PENDING,
+        currentPage: 1,
+        images: [],
+        isLoadMore: true,
+      });
       getImages(searchText, currentPage)
         .then(data => {
+          if (data.totalHits === 0) {
+            this.setState({ status: STATUS.RESOLVED, isLoadMore: false });
+            return Notiflix.Notify.info(
+              'Ничего не найдено. Попробуйте изменить запрос.'
+            );
+          }
+          if (data.totalHits <= 12) {
+            this.setState({ status: STATUS.RESOLVED, isLoadMore: false });
+            Notiflix.Notify.info('<Больше картинок не найдено.>');
+          }
           if (data.status === 'error') {
             return Promise.reject(data.message);
           }
+          const imageArr = data.hits.map(
+            ({ id, tags, webformatURL, largeImageURL }) => ({
+              id,
+              tags,
+              webformatURL,
+              largeImageURL,
+            })
+          );
           this.setState({
-            images: data.hits,
+            images: imageArr,
             status: STATUS.RESOLVED,
           });
         })
@@ -49,12 +73,25 @@ export default class ImageGallery extends Component {
       this.setState({ status: STATUS.PENDING });
       getImages(searchText, currentPage)
         .then(data => {
-          if (data.totalHits < 12) {
-            this.setState({ status: STATUS.RESOLVED });
-            return Notiflix.Notify.info('<Больше картинок не найдено.>');
+          if (Math.floor(data.totalHits / currentPage) < 12) {
+            this.setState({ status: STATUS.RESOLVED, isLoadMore: false });
+            Notiflix.Notify.info('<Больше картинок не найдено.>');
           }
+          if (data.totalHits === 0) {
+            return Notiflix.Notify.info(
+              'Ничего не найдено. Попробуйте изменить запрос.'
+            );
+          }
+          const imageArr = data.hits.map(
+            ({ id, tags, webformatURL, largeImageURL }) => ({
+              id,
+              tags,
+              webformatURL,
+              largeImageURL,
+            })
+          );
           this.setState(prevState => ({
-            images: [...prevState.images, ...data.hits],
+            images: [...prevState.images, ...imageArr],
             status: STATUS.RESOLVED,
           }));
         })
@@ -77,14 +114,25 @@ export default class ImageGallery extends Component {
   };
 
   render() {
-    const { isShowModal, largeImgURL, images, status, currentPage } =
-      this.state;
+    const {
+      isShowModal,
+      largeImgURL,
+      images,
+      status,
+      currentPage,
+      isLoadMore,
+    } = this.state;
     return (
       <>
         {status === STATUS.PENDING && currentPage === 1 && <Loader />}
         {isShowModal && (
           <Modal largeImageURL={largeImgURL} closeModal={this.closeModal} />
         )}
+        {/* {status === STATUS.RESOLVED &&
+          images.length === 0 &&
+          Notiflix.Notify.info(
+            'Ничего не найдено. Попробуйте изменить запрос.'
+          )} */}
         {images.length > 0 && (
           <>
             <ImageGalleryList onClick={e => this.imageClick(e)}>
@@ -94,11 +142,12 @@ export default class ImageGallery extends Component {
                     webformatURL={image.webformatURL}
                     key={image.id}
                     id={image.id}
+                    tags={image.tags}
                   />
                 );
               })}
             </ImageGalleryList>
-            {status === STATUS.RESOLVED && (
+            {status === STATUS.RESOLVED && isLoadMore && (
               <LoadMoreBtn onClick={this.loadMoreBtn} />
             )}
             {status === STATUS.PENDING && <Loader />}
