@@ -30,6 +30,7 @@ export default class ImageGallery extends Component {
   componentDidUpdate(prevProps, prevState) {
     const searchText = this.props.searchText.trim();
     const { currentPage } = this.state;
+
     if (prevProps.searchText !== searchText && searchText) {
       this.setState({
         status: STATUS.PENDING,
@@ -37,7 +38,7 @@ export default class ImageGallery extends Component {
         images: [],
         isLoadMore: true,
       });
-      getImages(searchText, currentPage)
+      getImages(searchText, 1)
         .then(data => {
           if (data.totalHits === 0) {
             this.setState({ status: STATUS.RESOLVED, isLoadMore: false });
@@ -69,6 +70,7 @@ export default class ImageGallery extends Component {
           this.setState({ error, status: STATUS.REJECTED });
         });
     }
+
     if (prevState.currentPage !== currentPage && currentPage !== 1) {
       this.setState({ status: STATUS.PENDING });
       getImages(searchText, currentPage)
@@ -100,9 +102,11 @@ export default class ImageGallery extends Component {
         });
     }
   }
+
   loadMoreBtn = () => {
     this.setState(prevState => ({ currentPage: prevState.currentPage + 1 }));
   };
+
   imageClick = e => {
     const imageId = e.target.id;
     const { images } = this.state;
@@ -128,11 +132,6 @@ export default class ImageGallery extends Component {
         {isShowModal && (
           <Modal largeImageURL={largeImgURL} closeModal={this.closeModal} />
         )}
-        {/* {status === STATUS.RESOLVED &&
-          images.length === 0 &&
-          Notiflix.Notify.info(
-            'Ничего не найдено. Попробуйте изменить запрос.'
-          )} */}
         {images.length > 0 && (
           <>
             <ImageGalleryList onClick={e => this.imageClick(e)}>
